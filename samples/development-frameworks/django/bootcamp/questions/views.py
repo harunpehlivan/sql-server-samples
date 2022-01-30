@@ -52,18 +52,17 @@ def all(request):
 def ask(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST)
-        if form.is_valid():
-            question = Question()
-            question.user = request.user
-            question.title = form.cleaned_data.get('title')
-            question.description = form.cleaned_data.get('description')
-            question.save()
-            tags = form.cleaned_data.get('tags')
-            question.create_tags(tags)
-            return redirect('/questions/')
-
-        else:
+        if not form.is_valid():
             return render(request, 'questions/ask.html', {'form': form})
+
+        question = Question()
+        question.user = request.user
+        question.title = form.cleaned_data.get('title')
+        question.description = form.cleaned_data.get('description')
+        question.save()
+        tags = form.cleaned_data.get('tags')
+        question.create_tags(tags)
+        return redirect('/questions/')
 
     else:
         form = QuestionForm()
@@ -83,25 +82,24 @@ def question(request, pk):
 
 @login_required
 def answer(request):
-    if request.method == 'POST':
-        form = AnswerForm(request.POST)
-        if form.is_valid():
-            user = request.user
-            answer = Answer()
-            answer.user = request.user
-            answer.question = form.cleaned_data.get('question')
-            answer.description = form.cleaned_data.get('description')
-            answer.save()
-            user.profile.notify_answered(answer.question)
-            return redirect(u'/questions/{0}/'.format(answer.question.pk))
-        else:
-            question = form.cleaned_data.get('question')
-            return render(request, 'questions/question.html', {
-                'question': question,
-                'form': form
-            })
-    else:
+    if request.method != 'POST':
         return redirect('/questions/')
+    form = AnswerForm(request.POST)
+    if form.is_valid():
+        user = request.user
+        answer = Answer()
+        answer.user = request.user
+        answer.question = form.cleaned_data.get('question')
+        answer.description = form.cleaned_data.get('description')
+        answer.save()
+        user.profile.notify_answered(answer.question)
+        return redirect(u'/questions/{0}/'.format(answer.question.pk))
+    else:
+        question = form.cleaned_data.get('question')
+        return render(request, 'questions/question.html', {
+            'question': question,
+            'form': form
+        })
 
 
 @login_required
@@ -133,10 +131,12 @@ def vote(request):
     answer = Answer.objects.get(pk=answer_id)
     vote = request.POST['vote']
     user = request.user
-    activity = Activity.objects.filter(
-        Q(activity_type=Activity.UP_VOTE) | Q(activity_type=Activity.DOWN_VOTE),
-        user=user, answer=answer_id)
-    if activity:
+    if activity := Activity.objects.filter(
+        Q(activity_type=Activity.UP_VOTE)
+        | Q(activity_type=Activity.DOWN_VOTE),
+        user=user,
+        answer=answer_id,
+    ):
         activity.delete()
     if vote in [Activity.UP_VOTE, Activity.DOWN_VOTE]:
         activity = Activity(activity_type=vote, user=user, answer=answer_id)
@@ -150,9 +150,9 @@ def favorite(request):
     question_id = request.POST['question']
     question = Question.objects.get(pk=question_id)
     user = request.user
-    activity = Activity.objects.filter(activity_type=Activity.FAVORITE,
-                                       user=user, question=question_id)
-    if activity:
+    if activity := Activity.objects.filter(
+        activity_type=Activity.FAVORITE, user=user, question=question_id
+    ):
         activity.delete()
         user.profile.unotify_favorited(question)
     else:

@@ -24,23 +24,16 @@ CUSTOM_FIXTURES = [
 ]
 
 RANGES = {
-    # All valid codepoints in the BMP
-    'bmp': chain(range(0x0000, 0xD800), range(0xE000, 0xFFFF)),
-    # Smaller set of pertinent? codepoints inside BMP
-    # see: http://en.wikipedia.org/wiki/Plane_(Unicode)#Basic_Multilingual_Plane
+    'bmp': chain(range(0xD800), range(0xE000, 0xFFFF)),
     'small': chain(
-        # latin blocks
-        range(0x0000, 0x0250),
-        # Greek, Cyrillic
+        range(0x0250),
         range(0x0370, 0x0530),
-        # Hebrew, Arabic
         range(0x590, 0x0700),
-        # CJK radicals
         range(0x2E80, 0x2F00),
-        # Hiragana, Katakana
-        range(0x3040, 0x3100)
-    )
+        range(0x3040, 0x3100),
+    ),
 }
+
 
 
 if __name__ == '__main__':

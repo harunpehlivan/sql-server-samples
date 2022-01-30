@@ -38,8 +38,7 @@ def decrypt(request, json_key_attributes_dict, pin, version):
     if request.alg == CryptoConstants.WRAP_RSA_OAEP:
         cipher_algo = PKCS1_OAEP.new(key, hashAlgo = SHA1)
         plain_text = cipher_algo.decrypt(request.value)
-        response = EncryptDecryptResponse(plain_text)
-        return response
+        return EncryptDecryptResponse(plain_text)
 
 
 def encrypt(request, json_key_attributes_dict, pin, version):
@@ -67,8 +66,7 @@ def encrypt(request, json_key_attributes_dict, pin, version):
     if request.alg == CryptoConstants.WRAP_RSA_OAEP:
         cipher_algo = PKCS1_OAEP.new(key)
         cipher_text = cipher_algo.encrypt(request.value)
-        response = EncryptDecryptResponse(cipher_text)
-        return response
+        return EncryptDecryptResponse(cipher_text)
 
 def get_key(json_key_attributes_dict, pin, version):
     key_path = json_key_attributes_dict["keypath"]
@@ -86,5 +84,4 @@ def get_key(json_key_attributes_dict, pin, version):
     rsa_key_pem = read_response['data']['data'][key_name]
 
     key = RSA.import_key(rsa_key_pem)
-    jwk = JsonWebKeyResponse(key.n, key.e)
-    return jwk
+    return JsonWebKeyResponse(key.n, key.e)

@@ -88,21 +88,20 @@ def delete(request):
 @login_required
 @ajax_required
 def send(request):
-    if request.method == 'POST':
-        from_user = request.user
-        to_user_username = request.POST.get('to')
-        to_user = User.objects.get(username=to_user_username)
-        message = request.POST.get('message')
-        if len(message.strip()) == 0:
-            return HttpResponse()
-        if from_user != to_user:
-            msg = Message.send_message(from_user, to_user, message)
-            return render(request, 'messenger/includes/partial_message.html',
-                          {'message': msg})
-
-        return HttpResponse()
-    else:
+    if request.method != 'POST':
         return HttpResponseBadRequest()
+    from_user = request.user
+    to_user_username = request.POST.get('to')
+    to_user = User.objects.get(username=to_user_username)
+    message = request.POST.get('message')
+    if len(message.strip()) == 0:
+        return HttpResponse()
+    if from_user != to_user:
+        msg = Message.send_message(from_user, to_user, message)
+        return render(request, 'messenger/includes/partial_message.html',
+                      {'message': msg})
+
+    return HttpResponse()
 
 
 @login_required

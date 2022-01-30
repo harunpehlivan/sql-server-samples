@@ -45,10 +45,7 @@ class Profile(models.Model):
 
     def get_screen_name(self):
         try:
-            if self.user.get_full_name():
-                return self.user.get_full_name()
-            else:
-                return self.user.username
+            return self.user.get_full_name() or self.user.username
         except:
             return self.user.username
 
@@ -72,10 +69,11 @@ class Profile(models.Model):
 
     def notify_also_commented(self, feed):
         comments = feed.get_comments()
-        users = []
-        for comment in comments:
-            if comment.user != self.user and comment.user != feed.user:
-                users.append(comment.user.pk)
+        users = [
+            comment.user.pk
+            for comment in comments
+            if comment.user not in [self.user, feed.user]
+        ]
 
         users = list(set(users))
         for user in users:

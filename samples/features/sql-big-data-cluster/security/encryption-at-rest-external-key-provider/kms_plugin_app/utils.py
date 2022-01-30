@@ -28,7 +28,7 @@ def _int_to_bytes(i):
     Converts the given int to the big-endian bytes
     """
     h = hex(i)
-    if len(h) > 1 and h[0:2] == "0x":
+    if len(h) > 1 and h.startswith("0x"):
         h = h[2:]
 
     # need to strip L in python 2.x

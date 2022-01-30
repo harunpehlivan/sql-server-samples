@@ -240,7 +240,7 @@ def sqlcmd(login_port, login_name, login_password, command):
 	])
 
 def quoteName(name, quote_char):
-	if quote_char == '[' or quote_char == ']':
+	if quote_char in ['[', ']']:
 		(quote_start_char, quote_end_char) = ('[', ']')
 	elif quote_char == "'":
 		(quote_start_char, quote_end_char) = ("N'", "'")

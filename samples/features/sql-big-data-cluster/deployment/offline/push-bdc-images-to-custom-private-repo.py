@@ -58,9 +58,19 @@ images = ['mssql-app-service-proxy',
 
 
 print("Pulling images from source repository: " + SOURCE_DOCKER_REGISTRY + "/" + SOURCE_DOCKER_REPOSITORY)
-cmd = ""
-for image in images:
-     cmd += "docker pull " + SOURCE_DOCKER_REGISTRY + "/" + SOURCE_DOCKER_REPOSITORY + "/" + image + ":" + SOURCE_DOCKER_TAG +  " & "
+cmd = "".join(
+    "docker pull "
+    + SOURCE_DOCKER_REGISTRY
+    + "/"
+    + SOURCE_DOCKER_REPOSITORY
+    + "/"
+    + image
+    + ":"
+    + SOURCE_DOCKER_TAG
+    + " & "
+    for image in images
+)
+
 cmd = cmd[:len(cmd)-3]
 execute_cmd(cmd)
 
@@ -70,16 +80,44 @@ execute_cmd(cmd)
 print("")
 
 print("Tagging local images...")
-cmd = ""
-for image in images:
-     cmd += "docker tag " + SOURCE_DOCKER_REGISTRY + "/" + SOURCE_DOCKER_REPOSITORY + "/" + image + ":" + SOURCE_DOCKER_TAG + " " + TARGET_DOCKER_REGISTRY + "/" + TARGET_DOCKER_REPOSITORY + "/" + image + ":" + TARGET_DOCKER_TAG + " & "
+cmd = "".join(
+    "docker tag "
+    + SOURCE_DOCKER_REGISTRY
+    + "/"
+    + SOURCE_DOCKER_REPOSITORY
+    + "/"
+    + image
+    + ":"
+    + SOURCE_DOCKER_TAG
+    + " "
+    + TARGET_DOCKER_REGISTRY
+    + "/"
+    + TARGET_DOCKER_REPOSITORY
+    + "/"
+    + image
+    + ":"
+    + TARGET_DOCKER_TAG
+    + " & "
+    for image in images
+)
+
 cmd = cmd[:len(cmd)-3]
 execute_cmd(cmd)
 
 print("Push images to target Docker repository: " + TARGET_DOCKER_REGISTRY + "/" + TARGET_DOCKER_REPOSITORY)
-cmd = ""
-for image in images:
-     cmd += "docker push " + TARGET_DOCKER_REGISTRY + "/" + TARGET_DOCKER_REPOSITORY + "/" + image + ":" + TARGET_DOCKER_TAG + " & "
+cmd = "".join(
+    "docker push "
+    + TARGET_DOCKER_REGISTRY
+    + "/"
+    + TARGET_DOCKER_REPOSITORY
+    + "/"
+    + image
+    + ":"
+    + TARGET_DOCKER_TAG
+    + " & "
+    for image in images
+)
+
 cmd = cmd[:len(cmd)-3]
 execute_cmd(cmd)
 

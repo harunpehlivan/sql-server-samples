@@ -18,9 +18,7 @@ def feeds(request):
     all_feeds = Feed.get_feeds()
     paginator = Paginator(all_feeds, FEEDS_NUM_PAGES)
     feeds = paginator.page(1)
-    from_feed = -1
-    if feeds:
-        from_feed = feeds[0].id
+    from_feed = feeds[0].id if feeds else -1
     return render(request, 'feeds/feeds.html', {
         'feeds': feeds,
         'from_feed': from_feed,
@@ -125,9 +123,9 @@ def like(request):
     feed_id = request.POST['feed']
     feed = Feed.objects.get(pk=feed_id)
     user = request.user
-    like = Activity.objects.filter(activity_type=Activity.LIKE, feed=feed_id,
-                                   user=user)
-    if like:
+    if like := Activity.objects.filter(
+        activity_type=Activity.LIKE, feed=feed_id, user=user
+    ):
         user.profile.unotify_liked(feed)
         like.delete()
 
@@ -153,14 +151,12 @@ def comment(request):
             feed.comment(user=user, post=post)
             user.profile.notify_commented(feed)
             user.profile.notify_also_commented(feed)
-        return render(request, 'feeds/partial_feed_comments.html',
-                      {'feed': feed})
-
     else:
         feed_id = request.GET.get('feed')
         feed = Feed.objects.get(pk=feed_id)
-        return render(request, 'feeds/partial_feed_comments.html',
-                      {'feed': feed})
+
+    return render(request, 'feeds/partial_feed_comments.html',
+                  {'feed': feed})
 
 
 @login_required
@@ -172,9 +168,11 @@ def update(request):
     feeds = Feed.get_feeds().filter(id__range=(last_feed, first_feed))
     if feed_source != 'all':
         feeds = feeds.filter(user__id=feed_source)
-    dump = {}
-    for feed in feeds:
-        dump[feed.pk] = {'likes': feed.likes, 'comments': feed.comments}
+    dump = {
+        feed.pk: {'likes': feed.likes, 'comments': feed.comments}
+        for feed in feeds
+    }
+
     data = json.dumps(dump)
     return HttpResponse(data, content_type='application/json')
 

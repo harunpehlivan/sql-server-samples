@@ -41,9 +41,7 @@ def profile(request, username):
     all_feeds = Feed.get_feeds().filter(user=page_user)
     paginator = Paginator(all_feeds, FEEDS_NUM_PAGES)
     feeds = paginator.page(1)
-    from_feed = -1
-    if feeds:
-        from_feed = feeds[0].id
+    from_feed = feeds[0].id if feeds else -1
     return render(request, 'core/profile.html', {
         'page_user': page_user,
         'feeds': feeds,

@@ -182,8 +182,7 @@ class OperatorYaml:
         for doc in self.data:
             if doc["kind"] == "Deployment":
                 return doc
-        else:
-            raise Exception("Invalid yaml, missing 'Deployment' spec")
+        raise Exception("Invalid yaml, missing 'Deployment' spec")
 
     def set_agent_image(self, image):
         yaml_set(self.deployment_spec,
@@ -317,10 +316,9 @@ class FailoverYaml:
         for doc in self.data:
             if doc["kind"] == doc_kind:
                 return doc
-        else:
-            raise Exception(
-                "Failover YAML missing {} document kind: {}".format(
-                    doc_kind, self.data))
+        raise Exception(
+            "Failover YAML missing {} document kind: {}".format(
+                doc_kind, self.data))
 
 
 # YAML helpers
