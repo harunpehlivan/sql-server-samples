@@ -27,20 +27,20 @@ def main(input_file_path, schema, table):
 if __name__ == '__main__':
     
     parser = OptionParser()
-    
+
     parser.add_option("-f", "--file", action="store", type="string", dest="input_file_name")
     parser.add_option("-s", "--schema", action="store", type="string", dest="schema")
     parser.add_option("-t", "--table", action="store", type="string", dest="table")
-    
+
     (options, args) = parser.parse_args()
 
     # retrieve options if not provided by the user
-    if (options.input_file_name == None):
+    if options.input_file_name is None:
         options.name = input('Please enter the full path to the csv file you will import as a node table:')
-    if (options.schema == None):
+    if options.schema is None:
         options.name = input('Please enter the SQL schema of the node table you will populate:')
-    if (options.table == None):
+    if options.table is None:
         options.name = input('Please enter the SQL name of the node table you are populate:')
- 
+
     main(options.input_file_name, options.schema, options.table)
 

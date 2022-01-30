@@ -24,16 +24,15 @@ class Feed(models.Model):
 
     @staticmethod
     def get_feeds(from_feed=None):
-        if from_feed is not None:
-            feeds = Feed.objects.filter(parent=None, id__lte=from_feed)
-        else:
-            feeds = Feed.objects.filter(parent=None)
-        return feeds
+        return (
+            Feed.objects.filter(parent=None, id__lte=from_feed)
+            if from_feed is not None
+            else Feed.objects.filter(parent=None)
+        )
 
     @staticmethod
     def get_feeds_after(feed):
-        feeds = Feed.objects.filter(parent=None, id__gt=feed)
-        return feeds
+        return Feed.objects.filter(parent=None, id__gt=feed)
 
     def get_comments(self):
         return Feed.objects.filter(parent=self).order_by('date')
@@ -46,16 +45,12 @@ class Feed(models.Model):
         return self.likes
 
     def get_likes(self):
-        likes = Activity.objects.filter(activity_type=Activity.LIKE,
+        return Activity.objects.filter(activity_type=Activity.LIKE,
                                         feed=self.pk)
-        return likes
 
     def get_likers(self):
         likes = self.get_likes()
-        likers = []
-        for like in likes:
-            likers.append(like.user)
-        return likers
+        return [like.user for like in likes]
 
     def calculate_comments(self):
         self.comments = Feed.objects.filter(parent=self).count()

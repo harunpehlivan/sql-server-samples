@@ -28,8 +28,7 @@ def decrypt(request, json_key_attributes_dict, pin, version):
     key_vault_key = get_akv_key(json_key_attributes_dict, credential)
     crypto_client = CryptographyClient(key_vault_key, credential=credential)
     decrypted_payload = crypto_client.decrypt(EncryptionAlgorithm.rsa_oaep, request.value)
-    response = EncryptDecryptResponse(decrypted_payload.plaintext)
-    return response
+    return EncryptDecryptResponse(decrypted_payload.plaintext)
 
 def encrypt(request, json_key_attributes_dict, pin, version):
     """
@@ -43,8 +42,7 @@ def encrypt(request, json_key_attributes_dict, pin, version):
     key_vault_key = get_akv_key(json_key_attributes_dict, credential)
     crypto_client = CryptographyClient(key_vault_key, credential=credential)
     encrypted_payload = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, request.value)
-    response = EncryptDecryptResponse(encrypted_payload.ciphertext)
-    return response
+    return EncryptDecryptResponse(encrypted_payload.ciphertext)
 
 def get_key(json_key_attributes_dict, pin, version):
     set_env(json_key_attributes_dict, pin)
@@ -82,9 +80,7 @@ def get_akv_key(json_key_attributes_dict, credential):
         raise KeyError('keyversion was expected in the parameters but not found')
 
     key_client = KeyClient(vault_url=vault_url, credential=credential)
-    key_vault_key = key_client.get_key(key_name, key_version)
-
-    return key_vault_key
+    return key_client.get_key(key_name, key_version)
 
 def set_env(json_key_attributes_dict, pin):
     """

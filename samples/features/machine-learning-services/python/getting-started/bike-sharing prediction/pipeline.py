@@ -156,10 +156,8 @@ class FeaturesScaler(BaseEstimator, TransformerMixin):
 
         X = StandardScaler().fit_transform(df.drop(excluded_cols, axis=1, inplace = False))
         X = np.concatenate((df.loc[:, excluded_cols].as_matrix(), X), axis = 1)
-        
-        df_out = pd.DataFrame(X, columns = cols)
 
-        return df_out
+        return pd.DataFrame(X, columns = cols)
 
 
 class RxClassifier(BaseEstimator, ClassifierMixin):  
@@ -208,10 +206,8 @@ class RxClassifier(BaseEstimator, ClassifierMixin):
          """
         if self.__clf is None:
             raise RuntimeError("Data must be fitted before calling predict!")
-            
-        predict = rx_predict_ex(self.__clf, data = X,  compute_context = self.__computecontext) 
-        predictions = np.where(predict._results['label_Pred'] == 1, 1, 0)
 
-        return predictions
+        predict = rx_predict_ex(self.__clf, data = X,  compute_context = self.__computecontext)
+        return np.where(predict._results['label_Pred'] == 1, 1, 0)
 
 

@@ -24,10 +24,8 @@ class DataSource():
         dataSource = RxSqlServerData(sqlQuery = "select * from dbo.trainingdata", verbose=True, reportProgress =True,
                                      connectionString = self.__connectionstring)
 
-        self.__computeContext = RxInSqlServer(connectionString = self.__connectionstring, autoCleanup = True)  
-        data = rx_import_datasource(dataSource)
-
-        return data
+        self.__computeContext = RxInSqlServer(connectionString = self.__connectionstring, autoCleanup = True)
+        return rx_import_datasource(dataSource)
 
     def getcomputecontext(self):
  

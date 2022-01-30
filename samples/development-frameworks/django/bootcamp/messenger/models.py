@@ -42,15 +42,11 @@ class Message(models.Model):
         conversations = Message.objects.filter(
             user=user).values('conversation').annotate(
                 last=Max('date')).order_by('-last')
-        users = []
-        for conversation in conversations:
-            users.append({
+        return [{
                 'user': User.objects.get(pk=conversation['conversation']),
                 'last': conversation['last'],
                 'unread': Message.objects.filter(user=user,
                                                  conversation__pk=conversation[
                                                     'conversation'],
                                                  is_read=False).count(),
-                })
-
-        return users
+                } for conversation in conversations]

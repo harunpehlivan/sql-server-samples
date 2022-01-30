@@ -47,8 +47,7 @@ class Article(models.Model):
 
     @staticmethod
     def get_published():
-        articles = Article.objects.filter(status=Article.PUBLISHED)
-        return articles
+        return Article.objects.filter(status=Article.PUBLISHED)
 
     def create_tags(self, tags):
         tags = tags.strip()
@@ -93,10 +92,7 @@ class Tag(models.Model):
         count = {}
         for tag in tags:
             if tag.article.status == Article.PUBLISHED:
-                if tag.tag in count:
-                    count[tag.tag] = count[tag.tag] + 1
-                else:
-                    count[tag.tag] = 1
+                count[tag.tag] = count[tag.tag] + 1 if tag.tag in count else 1
         sorted_count = sorted(count.items(), key=lambda t: t[1], reverse=True)
         return sorted_count[:20]
 

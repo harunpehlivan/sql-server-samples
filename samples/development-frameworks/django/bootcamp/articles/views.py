@@ -40,10 +40,10 @@ def article(request, slug):
 @login_required
 def tag(request, tag_name):
     tags = Tag.objects.filter(tag=tag_name)
-    articles = []
-    for tag in tags:
-        if tag.article.status == Article.PUBLISHED:
-            articles.append(tag.article)
+    articles = [
+        tag.article for tag in tags if tag.article.status == Article.PUBLISHED
+    ]
+
     return _articles(request, articles)
 
 

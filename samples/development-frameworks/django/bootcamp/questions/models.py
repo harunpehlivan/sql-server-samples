@@ -61,10 +61,7 @@ class Question(models.Model):
     def get_favoriters(self):
         favorites = Activity.objects.filter(activity_type=Activity.FAVORITE,
                                             question=self.pk)
-        favoriters = []
-        for favorite in favorites:
-            favoriters.append(favorite.user)
-        return favoriters
+        return [favorite.user for favorite in favorites]
 
     def create_tags(self, tags):
         tags = tags.strip()
@@ -116,18 +113,12 @@ class Answer(models.Model):
     def get_up_voters(self):
         votes = Activity.objects.filter(activity_type=Activity.UP_VOTE,
                                         answer=self.pk)
-        voters = []
-        for vote in votes:
-            voters.append(vote.user)
-        return voters
+        return [vote.user for vote in votes]
 
     def get_down_voters(self):
         votes = Activity.objects.filter(activity_type=Activity.DOWN_VOTE,
                                         answer=self.pk)
-        voters = []
-        for vote in votes:
-            voters.append(vote.user)
-        return voters
+        return [vote.user for vote in votes]
 
     def get_description_as_markdown(self):
         return markdown.markdown(self.description, safe_mode='escape')

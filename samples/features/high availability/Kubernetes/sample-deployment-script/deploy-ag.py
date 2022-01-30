@@ -451,9 +451,7 @@ def apply_specs(namespace,
                 sqlserver_yaml_file=SQLSERVER_YAML_FILENAME,
                 ag_services_yaml_file=AG_SERVICES_YAML_FILENAME):
     kconfig.load_kube_config()
-    operator_deployed = deploy_operator(namespace, operator_yaml_file)
-
-    if operator_deployed:
+    if operator_deployed := deploy_operator(namespace, operator_yaml_file):
         log(LogLevel.ALL, "Successfully deployed mssql-operator")
         log(LogLevel.ALL)
 
@@ -491,8 +489,7 @@ class ActionBase:
         self.parser.set_defaults(obj=self)
 
     def parse_args(self):
-        args = self.parser.parse_args()
-        return args
+        return self.parser.parse_args()
 
     def validate_args(self):
         return True
@@ -580,7 +577,7 @@ class DeployAction(ActionBase):
         args.sql_servers.sort()
         sql_list = []
         for sql in args.sql_servers:
-            if len(sql_list) > 0 and sql_list[-1] == sql:
+            if sql_list and sql_list[-1] == sql:
                 log(LogLevel.WARNING, "duplicate SQL Server = ", sql)
             else:
                 sql_list.append(sql)
